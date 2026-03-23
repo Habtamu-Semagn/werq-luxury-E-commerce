@@ -1,26 +1,10 @@
 import express from "express";
-import Product from "../models/Product.js";
+import { getProducts } from "../controllers/productController.js";
 
 const router = express.Router();
 
 // GET /api/products
-// Allows query filtering like ?category=bags
-router.get("/", async (req, res) => {
-    try {
-        const { category } = req.query;
-        let query = {};
-
-        if (category) {
-            // Case-insensitive regex match for category
-            query.category = { $regex: new RegExp(category, "i") };
-        }
-
-        const products = await Product.find(query).sort({ createdAt: -1 });
-        res.status(200).json(products);
-    } catch (error) {
-        console.error("Error fetching products:", error);
-        res.status(500).json({ message: "Server Error", error: error.message });
-    }
-});
+// Handles query filtering like ?category=bags
+router.get("/", getProducts);
 
 export default router;
