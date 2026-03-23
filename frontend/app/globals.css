@@ -1,0 +1,45 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Luxury Palette */
+  --color-background: #FFFFFF;
+  --color-foreground: #0A0A0A;
+  --color-accent: #D4AF37;
+  --color-muted: #F5F5F5;
+  
+  /* Fonts */
+  --font-luxury: var(--font-luxury), "Playfair Display", serif;
+  --font-standard: var(--font-standard), "Inter", sans-serif;
+  --font-sans: var(--font-standard), "Inter", sans-serif;
+  --font-serif: var(--font-luxury), "Playfair Display", serif;
+
+  /* Preserving default Next.js variables mapped */
+  --font-mono: var(--font-geist-mono);
+
+  /* Preserving fundamental shadcn keys as needed for UI */
+  --color-border: #E5E5E5;
+  --color-input: #E5E5E5;
+  --color-ring: #D4AF37;
+  --color-primary: #0A0A0A;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #F5F5F5;
+  --color-secondary-foreground: #0A0A0A;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-standard);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-luxury);
+  }
+}
