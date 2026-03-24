@@ -18,9 +18,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (!userInfo || !userInfo.isAdmin) return null;
 
     return (
-        <div className="flex min-h-screen bg-muted/20">
+        <div className="flex h-screen bg-muted/20 overflow-hidden">
             <AdminSidebar />
-            <div className="flex-1 flex flex-col overflow-auto">
+            <div className="flex-1 flex flex-col overflow-y-auto">
                 {children}
             </div>
         </div>

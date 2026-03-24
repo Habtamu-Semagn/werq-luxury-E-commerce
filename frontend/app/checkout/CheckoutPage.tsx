@@ -2,9 +2,15 @@
 
 import { createOrder } from "@/lib/api";
 import { useCartStore } from "@/store/cartStore";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const MapPicker = dynamic(() => import("@/components/checkout/MapPicker"), {
+    ssr: false,
+    loading: () => <div className="h-[300px] w-full bg-muted/20 animate-pulse rounded-sm mb-6 border border-foreground/10 flex items-center justify-center text-[10px] uppercase tracking-widest text-muted-foreground">Preparing Cartographic Data...</div>
+});
 
 export default function CheckoutPage() {
     const cart = useCartStore((state) => state.cart);
@@ -14,7 +20,7 @@ export default function CheckoutPage() {
 
     const [mounted, setMounted] = useState(false);
     const [contact, setContact] = useState({ email: "", phone: "" });
-    const [shipping, setShipping] = useState({ firstName: "", lastName: "", address: "", city: "", postalCode: "", country: "" });
+    const [shipping, setShipping] = useState({ firstName: "", lastName: "", address: "", city: "", postalCode: "", country: "", lat: 0, lng: 0 });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -25,6 +31,18 @@ export default function CheckoutPage() {
     if (!mounted) return null;
 
     const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+    const handleLocationSelected = (addressData: { address: string; city: string; postalCode: string; country: string; lat: number; lng: number }) => {
+        setShipping(prev => ({
+            ...prev,
+            address: addressData.address,
+            city: addressData.city,
+            postalCode: addressData.postalCode,
+            country: addressData.country,
+            lat: addressData.lat,
+            lng: addressData.lng,
+        }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -69,6 +87,9 @@ export default function CheckoutPage() {
 
                         <section>
                             <h2 className="font-luxury text-2xl mb-6 border-b border-foreground/10 pb-4">2. Shipping Address</h2>
+
+                            <MapPicker onLocationSelected={handleLocationSelected} />
+
                             <div className="grid grid-cols-2 gap-x-6 gap-y-6">
                                 <input type="text" placeholder="First Name" required className="w-full border-b border-foreground/20 bg-transparent py-3 focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground text-sm" value={shipping.firstName} onChange={(e) => setShipping({ ...shipping, firstName: e.target.value })} />
                                 <input type="text" placeholder="Last Name" required className="w-full border-b border-foreground/20 bg-transparent py-3 focus:outline-none focus:border-foreground transition-colors placeholder:text-muted-foreground text-sm" value={shipping.lastName} onChange={(e) => setShipping({ ...shipping, lastName: e.target.value })} />

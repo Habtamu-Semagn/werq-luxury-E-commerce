@@ -31,7 +31,7 @@ export default function AdminSidebar() {
     };
 
     return (
-        <aside className="flex flex-col w-64 min-h-screen bg-background border-r border-foreground/8">
+        <aside className="flex flex-col w-64 h-full bg-background border-r border-foreground/8 overflow-y-auto">
             {/* Brand */}
             <div className="px-6 py-6 flex flex-col gap-1">
                 <Link href="/" className="font-luxury text-2xl tracking-widest text-foreground hover:opacity-70 transition-opacity">

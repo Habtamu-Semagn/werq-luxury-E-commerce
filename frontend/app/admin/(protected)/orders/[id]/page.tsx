@@ -6,14 +6,20 @@ import { useRouter } from "next/navigation";
 import { getOrderById, updateOrderStatus } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Package, User, MapPin, CreditCard, Clock } from "lucide-react";
+import { ArrowLeft, Package, User, MapPin, CreditCard, Clock, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const MapPicker = dynamic(() => import("@/components/checkout/MapPicker"), {
+    ssr: false,
+    loading: () => <div className="h-[300px] w-full bg-muted/20 animate-pulse rounded-sm mb-6 border border-foreground/10 flex items-center justify-center text-[10px] uppercase tracking-widest text-muted-foreground">Preparing Cartographic Data...</div>
+});
 
 type OrderDetail = {
     _id: string;
     contact: { email: string };
-    shipping: { firstName: string; lastName: string; address: string; city: string; country: string; zipCode: string };
-    items: { _id: string; name: string; quantity: number; price: number; images?: string[] }[];
+    shipping: { firstName: string; lastName: string; address: string; city: string; country: string; zipCode: string; postalCode: string; lat?: number; lng?: number };
+    items: { _id: string; name: string; quantity: number; price: number; imageUrl?: string }[];
     totalAmount: number;
     status: string;
     createdAt: string;
@@ -112,8 +118,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                                 <div key={item._id} className="flex items-center justify-between py-4 border-b border-foreground/5 last:border-0">
                                     <div className="flex items-center gap-4">
                                         <div className="w-16 h-16 bg-muted/50 rounded-sm overflow-hidden border border-foreground/10">
-                                            {item.images?.[0] && (
-                                                <img src={item.images[0]} alt={item.name} className="w-full h-full object-cover" />
+                                            {item.imageUrl && (
+                                                <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
                                             )}
                                         </div>
                                         <div>
@@ -136,6 +142,40 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                                 <span className="uppercase tracking-widest text-xs">Total Manifest Value</span>
                                 <span>${order.totalAmount.toFixed(2)}</span>
                             </div>
+
+                            <div className="mt-8 pt-6 border-t border-foreground/10">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                                    <h2 className="text-xs uppercase tracking-widest font-semibold">Shipping Destination</h2>
+                                </div>
+                                <div className="space-y-1 text-xs text-muted-foreground leading-relaxed">
+                                    <p className="text-foreground font-medium">{order.shipping.address}</p>
+                                    <p>{order.shipping.city}, {order.shipping.zipCode || order.shipping.postalCode}</p>
+                                    <p>{order.shipping.country}</p>
+                                    <a
+                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${order.shipping.address}, ${order.shipping.city}, ${order.shipping.country}`)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] text-accent hover:text-accent/80 transition-colors mt-3"
+                                    >
+                                        Inspect on Google Maps
+                                        <ExternalLink className="w-3 h-3" />
+                                    </a>
+                                </div>
+                            </div>
+
+                            {order.shipping.lat && order.shipping.lng && (
+                                <div className="mt-8 pt-6 border-t border-foreground/10">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <MapPin className="w-4 h-4 text-muted-foreground" />
+                                        <h2 className="text-xs uppercase tracking-widest font-semibold">Interactive Manifest Location</h2>
+                                    </div>
+                                    <MapPicker
+                                        readOnly={true}
+                                        initialPosition={{ lat: order.shipping.lat, lng: order.shipping.lng }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </section>
                 </div>
