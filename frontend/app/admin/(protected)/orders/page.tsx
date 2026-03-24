@@ -6,6 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getOrders, updateOrderStatus } from "@/lib/api";
+import { Eye } from "lucide-react";
+import Link from "next/link";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger
+} from "@/components/ui/tooltip";
 
 type OrderRecord = {
     _id: string;
@@ -49,72 +57,92 @@ export default function AdminOrders() {
     };
 
     return (
-        <main className="p-8 max-w-6xl mx-auto w-full">
-            <div className="mb-8">
-                <h1 className="font-luxury text-3xl tracking-wide">Fulfillment Manifests</h1>
-                <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">
-                    {orders.length} order{orders.length !== 1 ? "s" : ""} recorded
-                </p>
-            </div>
-
-            <Separator className="mb-8 opacity-20" />
-
-            {loading ? (
-                <div className="flex items-center justify-center h-48 text-xs uppercase tracking-widest text-muted-foreground">
-                    Loading manifests...
+        <TooltipProvider>
+            <main className="p-8 max-w-6xl mx-auto w-full">
+                <div className="mb-8">
+                    <h1 className="font-luxury text-3xl tracking-wide">Fulfillment Manifests</h1>
+                    <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">
+                        {orders.length} order{orders.length !== 1 ? "s" : ""} recorded
+                    </p>
                 </div>
-            ) : (
-                <Table>
-                    <TableHeader>
-                        <TableRow className="border-foreground/10">
-                            <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal">Order ID</TableHead>
-                            <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal">Client</TableHead>
-                            <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal">Items</TableHead>
-                            <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal">Total</TableHead>
-                            <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal">Status</TableHead>
-                            <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal text-right">Update</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {orders.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={6} className="text-center text-xs text-muted-foreground py-12 uppercase tracking-widest">
-                                    No orders yet.
-                                </TableCell>
+
+                <Separator className="mb-8 opacity-20" />
+
+                {loading ? (
+                    <div className="flex items-center justify-center h-48 text-xs uppercase tracking-widest text-muted-foreground">
+                        Loading manifests...
+                    </div>
+                ) : (
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="border-foreground/10">
+                                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal">Order ID</TableHead>
+                                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal">Client</TableHead>
+                                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal">Items</TableHead>
+                                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal">Total</TableHead>
+                                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal">Status</TableHead>
+                                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal text-right">Update</TableHead>
+                                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground font-normal text-right">Actions</TableHead>
                             </TableRow>
-                        ) : orders.map(order => (
-                            <TableRow key={order._id} className="border-foreground/5 hover:bg-muted/20 transition-colors">
-                                <TableCell className="text-xs text-muted-foreground font-mono">{order._id.slice(0, 8)}...</TableCell>
-                                <TableCell>
-                                    <p className="text-sm font-medium">{order.shipping.firstName} {order.shipping.lastName}</p>
-                                    <p className="text-[10px] text-muted-foreground mt-0.5">{order.contact.email}</p>
-                                </TableCell>
-                                <TableCell className="text-sm">{order.items.length} item{order.items.length !== 1 ? "s" : ""}</TableCell>
-                                <TableCell className="font-medium text-sm">${order.totalAmount.toFixed(2)}</TableCell>
-                                <TableCell>
-                                    <Badge
-                                        variant="outline"
-                                        className={`text-[9px] uppercase tracking-widest ${statusColors[order.status] ?? ""}`}
-                                    >
-                                        {order.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <select
-                                        value={order.status}
-                                        onChange={(e) => updateStatus(order._id, e.target.value)}
-                                        className="bg-transparent border border-foreground/15 text-[10px] uppercase tracking-widest p-1.5 rounded-sm focus:outline-none hover:border-foreground/40 transition-colors"
-                                    >
-                                        {["Pending", "Processing", "Shipped", "Delivered"].map(s => (
-                                            <option key={s} value={s}>{s}</option>
-                                        ))}
-                                    </select>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            )}
-        </main>
+                        </TableHeader>
+                        <TableBody>
+                            {orders.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={7} className="text-center text-xs text-muted-foreground py-12 uppercase tracking-widest">
+                                        No orders yet.
+                                    </TableCell>
+                                </TableRow>
+                            ) : orders.map(order => (
+                                <TableRow key={order._id} className="border-foreground/5 hover:bg-muted/20 transition-colors">
+                                    <TableCell className="text-xs text-muted-foreground font-mono">{order._id.slice(0, 8)}...</TableCell>
+                                    <TableCell>
+                                        <p className="text-sm font-medium">{order.shipping.firstName} {order.shipping.lastName}</p>
+                                        <p className="text-[10px] text-muted-foreground mt-0.5">{order.contact.email}</p>
+                                    </TableCell>
+                                    <TableCell className="text-sm">{order.items.length} item{order.items.length !== 1 ? "s" : ""}</TableCell>
+                                    <TableCell className="font-medium text-sm">${order.totalAmount.toFixed(2)}</TableCell>
+                                    <TableCell>
+                                        <Badge
+                                            variant="outline"
+                                            className={`text-[9px] uppercase tracking-widest ${statusColors[order.status] ?? ""}`}
+                                        >
+                                            {order.status}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <select
+                                            value={order.status}
+                                            onChange={(e) => updateStatus(order._id, e.target.value)}
+                                            className="bg-transparent border border-foreground/15 text-[10px] uppercase tracking-widest p-1.5 rounded-sm focus:outline-none hover:border-foreground/40 transition-colors"
+                                        >
+                                            {["Pending", "Processing", "Shipped", "Delivered"].map(s => (
+                                                <option key={s} value={s}>{s}</option>
+                                            ))}
+                                        </select>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex items-center justify-end gap-3">
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Link
+                                                        href={`/admin/orders/${order._id}`}
+                                                        className="text-muted-foreground hover:text-foreground transition-colors p-1.5"
+                                                    >
+                                                        <Eye className="w-4 h-4" strokeWidth={1.5} />
+                                                    </Link>
+                                                </TooltipTrigger>
+                                                <TooltipContent className="text-[10px] uppercase tracking-widest bg-foreground text-background">
+                                                    Inspect Manifest
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                )}
+            </main>
+        </TooltipProvider>
     );
 }

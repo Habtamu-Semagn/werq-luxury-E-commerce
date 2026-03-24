@@ -34,6 +34,11 @@ export const getOrders = (token: string) =>
         headers: { Authorization: `Bearer ${token}` },
     });
 
+export const getOrderById = (id: string, token: string) =>
+    apiFetch(`/orders/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+
 export const updateOrderStatus = (id: string, status: string, token: string) =>
     apiFetch(`/orders/${id}/status`, {
         method: "PUT",
@@ -52,4 +57,11 @@ export const deleteProduct = (id: string, token: string) =>
     apiFetch(`/products/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
+    });
+
+export const updateProduct = (id: string, token: string, productData: any) =>
+    apiFetch(`/products/${id}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify(productData),
     });

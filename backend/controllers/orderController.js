@@ -46,3 +46,16 @@ export const updateOrderStatus = async (req, res) => {
         res.status(500).json({ message: "Server Error updating manifest.", error: error.message });
     }
 };
+
+export const getOrderById = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+        if (order) {
+            res.status(200).json(order);
+        } else {
+            res.status(404).json({ message: "Order not found." });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Server Error fetching order detail.", error: error.message });
+    }
+};
