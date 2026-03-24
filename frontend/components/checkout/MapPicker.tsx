@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Navigation } from "lucide-react";
 import debounce from "lodash.debounce";
 
 // Fix for default marker icons in Leaflet with Next.js
@@ -45,14 +46,16 @@ function LocationMarker({ onLocationSelected, initialPosition, readOnly }: MapPi
                         const streetAddress = [road, house_number, suburb].filter(Boolean).join(", ") || "Selected Location";
                         const cityValue = city || town || village || "";
 
-                        onLocationSelected({
-                            address: streetAddress,
-                            city: cityValue,
-                            postalCode: postcode || "",
-                            country: country || "",
-                            lat,
-                            lng,
-                        });
+                        if (onLocationSelected) {
+                            onLocationSelected({
+                                address: streetAddress,
+                                city: cityValue,
+                                postalCode: postcode || "",
+                                country: country || "",
+                                lat,
+                                lng,
+                            });
+                        }
                     }
                 } catch (error) {
                     console.error("Geocoding error:", error);
@@ -67,16 +70,22 @@ function LocationMarker({ onLocationSelected, initialPosition, readOnly }: MapPi
             setPosition(e.latlng);
             map.flyTo(e.latlng, map.getZoom());
             fetchAddress(e.latlng.lat, e.latlng.lng);
-            
+
             if (onLocationSelected) {
                 // Ensure we call it with coordinates even if fetchAddress is debounced
                 // Actually fetchAddress will call onLocationSelected with full data
             }
         },
+        locationfound(e) {
+            if (readOnly) return;
+            setPosition(e.latlng);
+            map.flyTo(e.latlng, 16);
+            fetchAddress(e.latlng.lat, e.latlng.lng);
+        },
     });
 
     useEffect(() => {
-        if (initialPosition) {
+        if (initialPosition && typeof initialPosition.lat === 'number' && typeof initialPosition.lng === 'number') {
             const latlng = L.latLng(initialPosition.lat, initialPosition.lng);
             setPosition(latlng);
             map.setView(latlng, map.getZoom());
@@ -86,7 +95,7 @@ function LocationMarker({ onLocationSelected, initialPosition, readOnly }: MapPi
     // Update fetchAddress to include lat/lng
     useEffect(() => {
         if (position && !initialPosition && onLocationSelected) {
-             // This is handled by the click handler calling fetchAddress
+            // This is handled by the click handler calling fetchAddress
         }
     }, [position, initialPosition, onLocationSelected]);
 
@@ -95,8 +104,28 @@ function LocationMarker({ onLocationSelected, initialPosition, readOnly }: MapPi
     );
 }
 
+function LocateControl() {
+    const map = useMap();
+    const handleLocate = () => {
+        map.locate();
+    };
+
+    return (
+        <button
+            onClick={(e) => {
+                e.preventDefault();
+                handleLocate();
+            }}
+            className="absolute bottom-6 right-6 z-[1000] bg-background border border-foreground/10 p-3 rounded-full shadow-lg hover:bg-muted transition-colors group"
+            title="Locate Me"
+        >
+            <Navigation className="w-4 h-4 text-foreground group-hover:scale-110 transition-transform" />
+        </button>
+    );
+}
+
 export default function MapPicker({ onLocationSelected, initialPosition, readOnly }: MapPickerProps) {
-    const center: L.LatLngExpression = initialPosition ? [initialPosition.lat, initialPosition.lng] : [9.03, 38.74]; 
+    const center: L.LatLngExpression = initialPosition ? [initialPosition.lat, initialPosition.lng] : [9.03, 38.74];
 
     return (
         <div className={`h-[300px] w-full rounded-sm overflow-hidden border border-foreground/10 mb-6 group relative ${readOnly ? "cursor-default" : ""}`}>
@@ -116,6 +145,7 @@ export default function MapPicker({ onLocationSelected, initialPosition, readOnl
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <LocationMarker onLocationSelected={onLocationSelected} initialPosition={initialPosition} readOnly={readOnly} />
+                {!readOnly && <LocateControl />}
             </MapContainer>
         </div>
     );

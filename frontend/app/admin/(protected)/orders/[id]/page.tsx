@@ -138,34 +138,14 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                                 <span>Subtotal</span>
                                 <span>${order.totalAmount.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between text-base font-semibold pt-2">
+                            <div className="flex justify-between text-base font-semibold pt-2 pb-6">
                                 <span className="uppercase tracking-widest text-xs">Total Manifest Value</span>
                                 <span>${order.totalAmount.toFixed(2)}</span>
                             </div>
 
-                            <div className="mt-8 pt-6 border-t border-foreground/10">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <MapPin className="w-4 h-4 text-muted-foreground" />
-                                    <h2 className="text-xs uppercase tracking-widest font-semibold">Shipping Destination</h2>
-                                </div>
-                                <div className="space-y-1 text-xs text-muted-foreground leading-relaxed">
-                                    <p className="text-foreground font-medium">{order.shipping.address}</p>
-                                    <p>{order.shipping.city}, {order.shipping.zipCode || order.shipping.postalCode}</p>
-                                    <p>{order.shipping.country}</p>
-                                    <a
-                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${order.shipping.address}, ${order.shipping.city}, ${order.shipping.country}`)}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] text-accent hover:text-accent/80 transition-colors mt-3"
-                                    >
-                                        Inspect on Google Maps
-                                        <ExternalLink className="w-3 h-3" />
-                                    </a>
-                                </div>
-                            </div>
-
-                            {order.shipping.lat && order.shipping.lng && (
-                                <div className="mt-8 pt-6 border-t border-foreground/10">
+                            {/* Interactive Map on the Left */}
+                            {typeof order.shipping.lat === 'number' && typeof order.shipping.lng === 'number' && (
+                                <div className="mt-4 pt-6 border-t border-foreground/10">
                                     <div className="flex items-center gap-2 mb-4">
                                         <MapPin className="w-4 h-4 text-muted-foreground" />
                                         <h2 className="text-xs uppercase tracking-widest font-semibold">Interactive Manifest Location</h2>
@@ -203,8 +183,17 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                             </div>
                             <div className="space-y-1 text-xs text-muted-foreground leading-relaxed uppercase tracking-wider">
                                 <p className="text-foreground font-medium">{order.shipping.address}</p>
-                                <p>{order.shipping.city}, {order.shipping.zipCode}</p>
+                                <p>{order.shipping.city}, {order.shipping.zipCode || order.shipping.postalCode}</p>
                                 <p>{order.shipping.country}</p>
+                                <a
+                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${order.shipping.address}, ${order.shipping.city}, ${order.shipping.country}`)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] text-accent hover:text-accent/80 transition-colors mt-3"
+                                >
+                                    Inspect on Google Maps
+                                    <ExternalLink className="w-3 h-3" />
+                                </a>
                             </div>
                         </div>
 
