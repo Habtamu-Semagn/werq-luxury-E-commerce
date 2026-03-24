@@ -7,7 +7,7 @@ export default function BrandStory() {
                 <p className="font-standard text-muted-foreground leading-relaxed md:text-lg mb-10">
                     At WERQ, we believe that true luxury lies in restraint. Our pieces are crafted with an uncompromising dedication to profound simplicity, sourcing only the finest sustainable materials to create timeless artifacts that transcend seasonal trends.
                 </p>
-                <span className="font-luxury text-xl text-foreground/80 italic">"Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away."</span>
+                <span className="font-luxury text-xl text-foreground/80 italic">&ldquo;Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away.&rdquo;</span>
             </div>
         </section>
     );

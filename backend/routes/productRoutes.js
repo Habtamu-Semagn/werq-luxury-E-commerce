@@ -1,13 +1,16 @@
 import express from "express";
-import { getProducts, getProductById } from "../controllers/productController.js";
+import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from "../controllers/productController.js";
+import { protect, admin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// GET /api/products
-// Handles query filtering like ?category=bags
+// Public Catalog Access
 router.get("/", getProducts);
-
-// GET /api/products/:id
 router.get("/:id", getProductById);
+
+// Protected Admin Core Actions
+router.post("/", protect, admin, createProduct);
+router.put("/:id", protect, admin, updateProduct);
+router.delete("/:id", protect, admin, deleteProduct);
 
 export default router;

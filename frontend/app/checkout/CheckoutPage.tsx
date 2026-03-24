@@ -10,12 +10,14 @@ export default function CheckoutPage() {
     const clearCart = useCartStore((state) => state.clearCart);
     const router = useRouter();
 
+     
     const [mounted, setMounted] = useState(false);
     const [contact, setContact] = useState({ email: "", phone: "" });
     const [shipping, setShipping] = useState({ firstName: "", lastName: "", address: "", city: "", postalCode: "", country: "" });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
 

@@ -8,9 +8,11 @@ import { useEffect, useState } from "react";
 export default function Navbar() {
     const toggleCart = useCartStore((state) => state.toggleCart);
     const cart = useCartStore((state) => state.cart);
+     
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
 

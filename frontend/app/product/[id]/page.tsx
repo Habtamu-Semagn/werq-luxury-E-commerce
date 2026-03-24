@@ -8,7 +8,8 @@ import Image from "next/image";
 
 export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
-    const [product, setProduct] = useState<any>(null);
+    type ProductData = { _id: string; name: string; price: number; category: string; description: string; images: string[]; message?: string };
+    const [product, setProduct] = useState<ProductData | null>(null);
     const [loading, setLoading] = useState(true);
 
     const addToCart = useCartStore((state) => state.addToCart);

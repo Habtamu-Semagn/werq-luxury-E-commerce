@@ -4,7 +4,7 @@ import { useCartStore } from "@/store/cartStore";
 import { X, Minus, Plus, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SideCart() {
@@ -15,9 +15,11 @@ export default function SideCart() {
     const removeFromCart = useCartStore((state) => state.removeFromCart);
 
     const router = useRouter();
+     
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
 

@@ -9,7 +9,9 @@ import { useSearchParams } from "next/navigation";
 function ShopContent() {
     const searchParams = useSearchParams();
     const categoryQuery = searchParams.get('category') || "all";
-    const [products, setProducts] = useState<any[]>([]);
+
+    interface Product { _id: string; name: string; price: number; category: string; images: string[] }
+    const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
