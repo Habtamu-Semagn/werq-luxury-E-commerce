@@ -4,7 +4,7 @@ import Link from "next/link";
 const CATEGORIES = [
     {
         title: "Leather Goods",
-        href: "/shop?category=bags",
+        href: "/shop?category=leather",
         imageUrl: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80"
     },
     {

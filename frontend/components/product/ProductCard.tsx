@@ -5,20 +5,23 @@ import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
 
 interface ProductCardProps {
-    id: string;
+    _id?: string;
+    id?: string;
     name: string;
     price: number;
     category: string;
-    imageUrl: string;
+    images: string[];
 }
 
 export default function ProductCard(product: ProductCardProps) {
-    const { id, name, price, category, imageUrl } = product;
+    const { _id, id, name, price, category, images } = product;
+    const productId = _id || id || "";
+    const imageUrl = images?.[0] || "";
     const addToCart = useCartStore((state) => state.addToCart);
 
     return (
         <div className="group block w-full space-y-4">
-            <Link href={`/product/${id}`} className="relative aspect-[4/5] block w-full overflow-hidden bg-muted">
+            <Link href={`/product/${productId}`} className="relative aspect-[4/5] block w-full overflow-hidden bg-muted">
                 <Image
                     src={imageUrl}
                     alt={name}
@@ -34,7 +37,7 @@ export default function ProductCard(product: ProductCardProps) {
                     <p className="font-medium text-foreground text-sm">${price.toFixed(2)}</p>
                 </div>
                 <button
-                    onClick={() => addToCart({ id, name, price, imageUrl, category })}
+                    onClick={() => addToCart({ id: productId, name, price, imageUrl, category })}
                     className="w-full sm:w-auto border border-foreground/20 text-foreground py-2 md:px-6 uppercase tracking-widest text-[10px] hover:bg-foreground hover:text-background transition-colors duration-300"
                 >
                     Add to Bag

@@ -6,6 +6,8 @@ import ProductCard from "@/components/product/ProductCard";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { getProducts } from "@/lib/api";
+
 function ShopContent() {
     const searchParams = useSearchParams();
     const categoryQuery = searchParams.get('category') || "all";
@@ -18,12 +20,7 @@ function ShopContent() {
         async function fetchProducts() {
             try {
                 setLoading(true);
-                let url = "http://localhost:5000/api/products";
-                if (categoryQuery !== "all") {
-                    url += `?category=${categoryQuery}`;
-                }
-                const res = await fetch(url);
-                const data = await res.json();
+                const data = await getProducts(categoryQuery);
                 setProducts(data);
             } catch (err) {
                 console.error(err);
@@ -70,11 +67,7 @@ function ShopContent() {
                         {products.map((product) => (
                             <ProductCard
                                 key={product._id}
-                                id={product._id}
-                                name={product.name}
-                                price={product.price}
-                                imageUrl={product.images[0] || "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80"}
-                                category={product.category}
+                                {...product}
                             />
                         ))}
                     </div>

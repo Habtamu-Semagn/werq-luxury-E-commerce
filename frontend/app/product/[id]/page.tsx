@@ -6,6 +6,8 @@ import { useCartStore } from "@/store/cartStore";
 import { useEffect, useState, use } from "react";
 import Image from "next/image";
 
+import { getProductById } from "@/lib/api";
+
 export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     type ProductData = { _id: string; name: string; price: number; category: string; description: string; images: string[]; message?: string };
@@ -17,8 +19,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     useEffect(() => {
         async function fetchProduct() {
             try {
-                const res = await fetch(`http://localhost:5000/api/products/${id}`);
-                const data = await res.json();
+                const data = await getProductById(id);
                 setProduct(data);
             } catch (err) {
                 console.error(err);

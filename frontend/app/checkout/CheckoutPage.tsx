@@ -1,5 +1,6 @@
 "use client";
 
+import { createOrder } from "@/lib/api";
 import { useCartStore } from "@/store/cartStore";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -10,7 +11,7 @@ export default function CheckoutPage() {
     const clearCart = useCartStore((state) => state.clearCart);
     const router = useRouter();
 
-     
+
     const [mounted, setMounted] = useState(false);
     const [contact, setContact] = useState({ email: "", phone: "" });
     const [shipping, setShipping] = useState({ firstName: "", lastName: "", address: "", city: "", postalCode: "", country: "" });
@@ -30,22 +31,12 @@ export default function CheckoutPage() {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch("http://localhost:5000/api/orders", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contact, shipping, items: cart, totalAmount: total }),
-            });
-
-            if (response.ok) {
-                clearCart();
-                router.push("/success");
-            } else {
-                alert("Oops! Failed to securely process this order. The MongoDB backend might be unreachable.");
-                setIsSubmitting(false);
-            }
+            await createOrder({ contact, shipping, items: cart, totalAmount: total });
+            clearCart();
+            router.push("/success");
         } catch (error) {
             console.error(error);
-            alert("A network error occurred connecting to the backend.");
+            alert("Oops! Failed to securely process this order. The MongoDB backend might be unreachable.");
             setIsSubmitting(false);
         }
     };

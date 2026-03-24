@@ -28,13 +28,14 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
     try {
+        const { name, price, description, category, stock, images } = req.body;
         const product = new Product({
-            name: "Sample Luxury Artifact",
-            price: 0,
-            description: "A placeholder piece ready for your precise bespoke curation.",
-            category: "leather",
-            stock: 0,
-            images: ["https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80"]
+            name: name || "Sample Luxury Artifact",
+            price: price || 0,
+            description: description || "A placeholder piece ready for your precise bespoke curation.",
+            category: category || "leather",
+            stock: stock || 0,
+            images: images || ["https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80"]
         });
         const createdProduct = await product.save();
         res.status(201).json(createdProduct);

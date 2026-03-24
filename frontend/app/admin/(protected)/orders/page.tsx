@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/authStore";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getOrders, updateOrderStatus } from "@/lib/api";
 
 type OrderRecord = {
     _id: string;
@@ -32,10 +33,7 @@ export default function AdminOrders() {
         if (!userInfo?.token) return;
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:5000/api/orders", {
-                headers: { Authorization: `Bearer ${userInfo.token}` }
-            });
-            const data = await res.json();
+            const data = await getOrders(userInfo.token);
             setOrders(Array.isArray(data) ? data : []);
         } catch { /* silent */ } finally { setLoading(false); }
     }, [userInfo?.token]);
@@ -43,15 +41,9 @@ export default function AdminOrders() {
     useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
     const updateStatus = async (id: string, status: string) => {
+        if (!userInfo?.token) return;
         try {
-            await fetch(`http://localhost:5000/api/orders/${id}/status`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${userInfo?.token}`
-                },
-                body: JSON.stringify({ status })
-            });
+            await updateOrderStatus(id, status, userInfo.token);
             fetchOrders();
         } catch { /* silent */ }
     };
