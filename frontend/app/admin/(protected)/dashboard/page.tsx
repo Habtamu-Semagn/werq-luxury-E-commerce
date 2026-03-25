@@ -6,6 +6,7 @@ import { Package, ShoppingCart, TrendingUp, Clock } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
+import { BASE_URL } from "@/lib/api";
 
 export default function AdminDashboard() {
     const { userInfo } = useAuthStore();
@@ -18,8 +19,8 @@ export default function AdminDashboard() {
 
         try {
             const [prodRes, ordRes] = await Promise.all([
-                fetch("http://localhost:5000/api/products"),
-                fetch("http://localhost:5000/api/orders", {
+                fetch(`${BASE_URL}/products`),
+                fetch(`${BASE_URL}/orders`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
             ]);

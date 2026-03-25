@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
+import { BASE_URL } from "@/lib/api";
 
 export default function AdminLogin() {
     const [email, setEmail] = useState("");
@@ -24,7 +25,7 @@ export default function AdminLogin() {
     const submitHandler = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await fetch("http://localhost:5000/api/users/login", {
+            const res = await fetch(`${BASE_URL}/users/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
