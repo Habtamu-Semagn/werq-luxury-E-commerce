@@ -13,16 +13,14 @@ export const protect = async (req, res, next) => {
 
             // Attach securely validated full User profile without transmitting password hash.
             req.user = await User.findById(decoded.userId).select("-password");
-            next();
+            return next();
         } catch (error) {
             console.error("Token verification failed:", error);
-            res.status(401).json({ message: "Not authorized, token architecture failed." });
+            return res.status(401).json({ message: "Not authorized, token architecture failed." });
         }
     }
 
-    if (!token) {
-        res.status(401).json({ message: "Not authorized, native token omitted." });
-    }
+    return res.status(401).json({ message: "Not authorized, native token omitted." });
 };
 
 export const admin = (req, res, next) => {

@@ -65,3 +65,15 @@ export const updateProduct = (id: string, token: string, productData: any) =>
         headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify(productData),
     });
+
+export const loginUser = (email: string, password: string) =>
+    apiFetch("/users/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+    });
+
+export const registerUserApi = (name: string, email: string, password: string) =>
+    apiFetch("/users", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password }),
+    });
