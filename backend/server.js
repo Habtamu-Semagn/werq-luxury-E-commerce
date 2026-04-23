@@ -18,6 +18,11 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Health check route
+app.get("/", (req, res) => {
+    res.json({ message: "Backend API is running" });
+});
+
 // Routes
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
